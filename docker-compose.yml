@@ -1,0 +1,29 @@
+services:
+  keycloak-db:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloakuser1
+      POSTGRES_PASSWORD: MasterAdmin@321
+    ports:
+      - "5432:5432"
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    command: start-dev
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloakuser1
+      KC_DB_PASSWORD: MasterAdmin@321
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: MasterAdmin@321
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-db
+
+volumes:
+  postgres_data:
